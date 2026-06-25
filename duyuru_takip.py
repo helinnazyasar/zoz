@@ -54,8 +54,8 @@ Link:
     msg["From"] = SENDER_EMAIL
     msg["To"] = RECEIVER_EMAIL
 
-    # Hotmail / Outlook SMTP
-    with smtplib.SMTP("smtp-mail.outlook.com", 587) as server:
+    # Gmail SMTP
+    with smtplib.SMTP("smtp.gmail.com", 587) as server:
         server.starttls()
         server.login(SENDER_EMAIL, SENDER_APP_PASSWORD)
         server.send_message(msg)
