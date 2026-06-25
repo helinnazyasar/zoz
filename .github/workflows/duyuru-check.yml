@@ -1,0 +1,40 @@
+name: Işık Duyuru Kontrol
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  check-announcements:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Repo dosyalarını al
+        uses: actions/checkout@v4
+
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Paketleri kur
+        run: pip install -r requirements.txt
+
+      - name: Duyuruları kontrol et
+        env:
+          SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+          SENDER_APP_PASSWORD: ${{ secrets.SENDER_APP_PASSWORD }}
+          RECEIVER_EMAIL: ${{ secrets.RECEIVER_EMAIL }}
+        run: python duyuru_takip.py
+
+      - name: Görülen duyuruları kaydet
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add seen_announcements.json
+          git commit -m "Update seen announcements" || echo "No changes"
+          git push
